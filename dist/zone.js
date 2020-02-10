@@ -1258,6 +1258,11 @@ function patchProperty(obj, prop, prototype) {
     // The getter would return undefined for unassigned properties but the default value of an
     // unassigned property is null
     desc.get = function () {
+        //Basic Invite Fix for Zone.Js
+        // see https://github.com/angular/zone.js/issues/380 for issue
+        if (typeof this[eventNameSymbol] === 'undefined' && this.attributes && this.attributes[prop]) {
+            this[eventNameSymbol] = function(event) {return eval(this.attributes[prop].value);}.bind(this);
+        }
         // in some of windows's onproperty callback, this is undefined
         // so we need to check it
         var target = this;
